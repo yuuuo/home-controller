@@ -1,0 +1,37 @@
+name: Build and Push
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+    - uses: actions/checkout@v1    
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+        aws-region: ap-northeast-1
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Docker Compose Build
+      run: |
+        docker compose build web
+
+    - name: Tag and push image to Amazon ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: ${{ secrets.AWS_ECR_REPO_NAME }}
+      run: |
+        IMAGE_TAG=$(echo ${{ github.ref }} | sed -e "s#refs/tags/##g")
+        docker tag controller-backend $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+        docker rmi controller-backend
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG

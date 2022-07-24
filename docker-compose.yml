@@ -1,0 +1,7 @@
+version: '3'
+services:
+  web:
+    build: backend
+    image: controller-backend
+    ports:
+    - 3001:80
