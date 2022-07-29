@@ -23,6 +23,9 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           role-session-name: GitHubActions
 
+      - name: npm ci
+        run: npm ci
+
       - name: npm run build
         run: npm run build
 
