@@ -1,0 +1,33 @@
+name: AWS Lambda Deploy
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: lambda
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: configure-aws-credentials
+        uses: aws-actions/configure-aws-credentials@master
+        with:
+          aws-region: ap-northeast-1
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-session-name: GitHubActions
+
+      - name: npm run build
+        run: npm run build
+
+      - name: zip
+        run: zip -r lambda.zip ./dist
+
+      - name: Deploy
+        run: aws lambda update-function-code --function-name controller-lambda --zip-file fileb://lambda.zip
