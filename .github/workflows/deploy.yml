@@ -27,7 +27,7 @@ jobs:
         run: npm run build
 
       - name: zip
-        run: zip -r lambda.zip ./dist
+        run: zip -rj lambda.zip ./dist
 
       - name: Deploy
         run: aws lambda update-function-code --function-name controller-lambda --zip-file fileb://lambda.zip
