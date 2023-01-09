@@ -1,0 +1,17 @@
+{
+  "folders": [
+    {
+      "path": "."
+    },
+    {
+      "path": "lambda"
+    },
+    {
+      "path": "frontend"
+    },
+    {
+      "path": "ir_sender"
+    }
+  ],
+  "settings": {}
+}
